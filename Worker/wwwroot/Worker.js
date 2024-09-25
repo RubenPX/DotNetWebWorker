@@ -1,5 +1,5 @@
 import { dotnet } from '/_framework/dotnet.js'
-import { infoLog } from "/_content/Worker/WorkerInitializer.js"
+import Console from "/_content/Worker/Logger.js"
 
 const workerInit = async () => {
     const { setModuleImports, getAssemblyExports, getConfig } = await dotnet
@@ -8,7 +8,7 @@ const workerInit = async () => {
 
     const exports = await getAssemblyExports("Worker");
 
-    infoLog("Worker Exports", exports.Worker);
+    Console.info("Worker Exports", exports.Worker);
 
     const test = (data) => { self.postMessage(data) }
     self.onmessage = (ev) => { console.log("message", ev) }
@@ -19,5 +19,5 @@ const workerInit = async () => {
 if (typeof WorkerGlobalScope !== 'undefined' || self instanceof WorkerGlobalScope) {
     workerInit();
 } else {
-    console.log("Not in web worker :(");
+    Console.error("Not in web worker :(");
 }
