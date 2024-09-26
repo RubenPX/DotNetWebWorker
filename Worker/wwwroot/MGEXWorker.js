@@ -6,14 +6,18 @@ const workerInit = async () => {
         .withDiagnosticTracing(false)
         .create();
 
-    const exports = await getAssemblyExports("Worker");
+    const worker = (await getAssemblyExports("Worker")).Worker;
+    Console.info("Worker Exports", worker);
 
-    Console.info("Worker Exports", exports.Worker);
+    self.onmessage = (ev) => {
+        if (Console.reciveDebug) Console.success("Worker <", ev.data);
+        worker.MGEXWorker.onMessage(ev.data)
+    }
 
-    const test = (data) => { self.postMessage(data) }
-    self.onmessage = (ev) => { console.log("message", ev) }
-
-    exports.Worker.MGEXWorker.Test(test);
+    worker.MGEXWorker.Init((data) => {
+        if (Console.sendDebug) Console.success("Worker >", data);
+        self.postMessage(data);
+    });
 }
 
 if (typeof WorkerGlobalScope !== 'undefined' || self instanceof WorkerGlobalScope) {

@@ -6,7 +6,13 @@ const badgeSucc = 'background-color: #492; border-radius: 100px; color: #000;';
 const badgeErro = 'background-color: #f33; border-radius: 100px; color: #000;';
 const badgeYellow = 'background-color: #fa0; border-radius: 100px; color: #000;';
 
+const debug = true;
+
+
 export default class Console {
+    static sendDebug = debug;
+    static reciveDebug = debug && false;
+
     static info(context, data) {
         if (context instanceof Array) return console.log('%c' + context.join(' | '), `${padding} ${badgeInfo}`, data)
         console.log('%c' + context, `${padding} ${badgeInfo}`, data)

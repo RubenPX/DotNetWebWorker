@@ -1,4 +1,5 @@
 ﻿using Microsoft.JSInterop;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.JavaScript;
 
 namespace Worker;
@@ -16,14 +17,17 @@ public partial class MGEXWorkerService {
     }
 
     private async void loadApp(IJSRuntime JS) {
-        module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/Worker/WorkerInitializer.js");
+        module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/Worker/MGEXWorkerService.js");
         await module.InvokeVoidAsync("initializeWorker", objRef);
-        
     }
 
     [JSExport]
     internal static async void onWorkerMessage(string data) {
-        if (debugMode) await module.InvokeVoidAsync("workerMessage", data ?? "");
+        if (data.ToLower() == "instanced") postMessage("init");
         objRef.Value.onMessage(data);
+    }
+
+    public static async void postMessage(string data) {
+        await module.InvokeVoidAsync("postMessage", data);
     }
 }
